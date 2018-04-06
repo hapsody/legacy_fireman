@@ -51,10 +51,14 @@ public class Pathfind : MonoBehaviour {
 		
 		if (_arrMap [pos.I, pos.J].Attribute != 1) { // exept obstacle terrain.
 			if (parentPos != null) {
-				_openList.Add (pos);
-				_arrMap [pos.I, pos.J].ParentPos = parentPos; 
+				if ( !_openList.Exists(x => x.I == pos.I && x.J == pos.J)) {
+					_openList.Add (pos);
+					_arrMap [pos.I, pos.J].ParentPos = parentPos; 
+				} else {
+
+				}
 			} else {
-				Debug.Log (" _startNodePos doesn't exist ");
+				Debug.Log (" parentPos doesn't exist ");
 				return false;
 			}
 		} else {
@@ -89,7 +93,8 @@ public class Pathfind : MonoBehaviour {
 	}
 
 	public void PrintOpenList() {
-		string outstr = "openList: ";
+		string outstr = null;
+		outstr += "openList: ";
 		_openList.ForEach( x => 
 			{
 				//PrintParent(x);
@@ -102,11 +107,11 @@ public class Pathfind : MonoBehaviour {
 	}
 
 	public void PrintCloseList() {
-		string outstr = "closeList: ";
+		string outstr = null;
+		outstr += "closeList: ";
 		_closeList.ForEach( x => 
 			{
 				outstr += "(" + x.I.ToString() + "," + x.J.ToString() + ") ";
-
 			});
 
 		Debug.Log(outstr);
@@ -200,17 +205,21 @@ public class Pathfind : MonoBehaviour {
 
 		// 4. path scoring
 		Pos minCostPos = GetMinCostNode();
-		//Debug.Log (string.Format ("minCostPos: ({0},{1}): F:{2}, G:{3}, H:{4}", minCostPos.I, minCostPos.J, _arrMap[minCostPos.I, minCostPos.J].F, _arrMap[minCostPos.I, minCostPos.J].G, _arrMap[minCostPos.I, minCostPos.J].H));
+		Debug.Log (string.Format ("minCostPos: ({0},{1}): F:{2}, G:{3}, H:{4}", minCostPos.I, minCostPos.J, _arrMap[minCostPos.I, minCostPos.J].F, _arrMap[minCostPos.I, minCostPos.J].G, _arrMap[minCostPos.I, minCostPos.J].H));
 		// deleting selected node from openList and Adding to closeList
 		_openList.Remove(minCostPos);
 		_closeList.Add (minCostPos);
 
 		PrintOpenList ();
 		PrintCloseList ();
+		Debug.Log(_openList.Exists(x => x.I == 11 && x.J == 9));
+		Debug.Log(_openList.Exists(x => x.I == 2 && x.J == 3));
+
 
 		// 5. Find adjacent Node from selected Node 
 		//    and among those things, only not exist things at openlist already, Add to openlist
 		//    In other words, minCostPos is new parent from adjacent nodes.
+
 		AddOpenList( new Pos(minCostPos.I, minCostPos.J+1 ), minCostPos);
 		AddOpenList( new Pos(minCostPos.I+1, minCostPos.J+1 ), minCostPos);
 		AddOpenList( new Pos(minCostPos.I+1, minCostPos.J ), minCostPos);
