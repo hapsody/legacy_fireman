@@ -46,34 +46,24 @@ public class Pathfind : MonoBehaviour {
 	private List<Pos> _closeList = new List<Pos>();
 
 
-
-	public bool AddOpenList(Pos pos, Pos parentPos){
+	public bool AddOpenList(Pos pos){
 		
-		if (_arrMap [pos.I, pos.J].Attribute != 1) { // exept obstacle terrain.
-			if (parentPos != null) {
-				if ( !_openList.Exists(x => x.I == pos.I && x.J == pos.J)) {
-					_openList.Add (pos);
-					_arrMap [pos.I, pos.J].ParentPos = parentPos; 
-				} else {
-
-				}
-			} else {
-				Debug.Log (" parentPos doesn't exist ");
-				return false;
-			}
+		if (pos != null) {
+			_openList.Add (pos);
+			return true;
 		} else {
-			Debug.Log (string.Format ("{0},{1} is obstacle", pos.I, pos.J));
+			Debug.Log ("null");
 			return false;
 		}
-
-		return true;
 	}
 
 	public bool AddCloseList(Pos pos){
+		
 		if (pos != null) {
 			_closeList.Add (pos);
 			return true;
 		} else {
+			Debug.Log ("null");
 			return false;
 		}
 	}
@@ -118,7 +108,143 @@ public class Pathfind : MonoBehaviour {
 
 	}
 
+	public int GetGValue(Pos pos, Pos parentPos){
 
+		if (pos.I != parentPos.I && pos.J != parentPos.J)
+			return 14;
+		else
+			return 10;
+	}
+
+	public int GetHValue(Pos pos)
+	{
+		return ( Mathf.Abs( _endNodePos.I - pos.I ) + Mathf.Abs( _endNodePos.J - pos.J) ) * 10;
+	}
+
+	public void CalTargetCost(Pos pos, Pos centerPos)
+	{
+		int latestG=0;
+
+		if( centerPos.I != pos.I && centerPos.J != pos.J)
+			latestG += 14;
+		else
+			latestG += 10;
+
+		if (_arrMap [pos.I, pos.J].G == 0) { // first cost calculation of target node.
+			_arrMap [pos.I, pos.J].G += latestG;
+			_arrMap [pos.I, pos.J].H = GetHValue (pos);
+			_arrMap [pos.I, pos.J].F = _arrMap [pos.I, pos.J].G + _arrMap [pos.I, pos.J].H;
+			_arrMap [pos.I, pos.J].ParentPos = centerPos;
+		} else { // not first cost calulatio of target node.
+			if (_arrMap [centerPos.I, centerPos.J].G + latestG < _arrMap [pos.I, pos.J].G) {
+				_arrMap [pos.I, pos.J].G = _arrMap [centerPos.I, centerPos.J].G + latestG;
+				_arrMap [pos.I, pos.J].ParentPos = centerPos;
+			}
+		}
+	}
+
+	public bool IsInCloseList(Pos pos)
+	{
+		
+		foreach (Pos b in _closeList)
+		{
+			if (b.I == pos.I && b.J == pos.J) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+	public void CalAdjCost(Pos centerPos)
+	{
+		Pos targetPos = new Pos (centerPos.I, centerPos.J);
+
+
+		targetPos.J++;
+		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
+			!IsInCloseList(targetPos)) //if not obstacle and closeList
+		{
+			CalTargetCost (targetPos, centerPos); // right 
+			AddOpenList(targetPos);
+		}
+		targetPos.J--;
+
+
+		targetPos = centerPos;
+		targetPos.I++; targetPos.J++;
+		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
+			!IsInCloseList(targetPos)) //if not obstacle and closeList
+		{
+			CalTargetCost (targetPos, centerPos); // right below
+			AddOpenList(targetPos);
+
+		}
+		targetPos.I--; targetPos.J--;
+
+		targetPos = centerPos;
+		targetPos.I++; 
+		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
+			!IsInCloseList(targetPos) ) //if not obstacle and closeList
+		{
+			CalTargetCost (targetPos, centerPos); // below
+			AddOpenList(targetPos);
+		}
+		targetPos.I--; 
+
+		targetPos = centerPos;
+		targetPos.I++; targetPos.J--;
+		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
+			!IsInCloseList(targetPos)) //if not obstacle and closeList
+		{
+			CalTargetCost (targetPos, centerPos); // left below
+			AddOpenList(targetPos);
+		}
+		targetPos.I--; targetPos.J++;
+
+
+		targetPos = centerPos;
+		targetPos.J--;
+		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
+			!IsInCloseList(targetPos)) //if not obstacle and closeList
+		{
+			CalTargetCost (targetPos, centerPos); // left
+			AddOpenList(targetPos);
+		}
+		targetPos.J++;
+
+		targetPos = centerPos;
+		targetPos.I--; targetPos.J--;
+		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
+			!IsInCloseList(targetPos)) //if not obstacle and closeList
+		{
+			CalTargetCost (targetPos, centerPos); // upper left
+			AddOpenList(targetPos);
+		}
+		targetPos.I++; targetPos.J++;
+
+		targetPos = centerPos;
+		targetPos.I--;
+		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
+			!IsInCloseList(targetPos)) //if not obstacle and closeList
+		{
+			CalTargetCost (targetPos, centerPos); // upper
+			AddOpenList(targetPos);
+		}
+		targetPos.I++;
+
+		targetPos = centerPos;
+		targetPos.I--; targetPos.J++;
+		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
+			!IsInCloseList(targetPos)) //if not obstacle and closeList
+		{
+			CalTargetCost (targetPos, centerPos); // upper right
+			AddOpenList(targetPos);
+		}
+		targetPos.I++; targetPos.J--;
+
+	}
 
 	public Pos GetMinCostNode()
 	{
@@ -127,26 +253,14 @@ public class Pathfind : MonoBehaviour {
 
 		_openList.ForEach( x => 
 			{
-				// Get g cost
-				if ( x.I != _arrMap[x.I,x.J].ParentPos.I && x.J != _arrMap[x.I,x.J].ParentPos.J )
-					_arrMap[x.I,x.J].G += 14;
-				else
-					_arrMap[x.I,x.J].G += 10; 
-
-				// Get h cost
-				_arrMap[x.I, x.J].H = ( Mathf.Abs( _endNodePos.I - x.I ) + Mathf.Abs( _endNodePos.J - x.J) ) * 10;
-
-				// Get f cost
-				_arrMap[x.I, x.J].F = _arrMap[x.I,x.J].G + _arrMap[x.I, x.J].H;
-
-				if( min > _arrMap[x.I, x.J].F ){
+				if (_arrMap[x.I, x.J].F < min && _arrMap[x.I, x.J].F > 0 ){
 					min = _arrMap[x.I, x.J].F;
 					minCostPos = x;
 				}
-			});
+			}
+		);
 
 		return minCostPos;
-
 	}
 
 
@@ -188,15 +302,12 @@ public class Pathfind : MonoBehaviour {
 			}
 		}
 
+		//-----------------------------------------------------------------------------------------
+
 		//1. 2. Finding Adjacent node from start and adding to openlist.
-		AddOpenList( new Pos(_startNodePos.I, _startNodePos.J+1), _startNodePos);
-		AddOpenList( new Pos(_startNodePos.I+1, _startNodePos.J+1), _startNodePos );
-		AddOpenList( new Pos(_startNodePos.I+1, _startNodePos.J), _startNodePos );
-		AddOpenList( new Pos(_startNodePos.I+1, _startNodePos.J-1), _startNodePos );
-		AddOpenList( new Pos(_startNodePos.I, _startNodePos.J-1), _startNodePos );
-		AddOpenList( new Pos(_startNodePos.I-1, _startNodePos.J-1), _startNodePos );
-		AddOpenList( new Pos(_startNodePos.I-1, _startNodePos.J), _startNodePos );
-		AddOpenList( new Pos(_startNodePos.I-1, _startNodePos.J+1), _startNodePos );
+
+
+
 
 
 
@@ -204,30 +315,25 @@ public class Pathfind : MonoBehaviour {
 		AddCloseList(_startNodePos);
 
 		// 4. path scoring
+		CalAdjCost(_startNodePos); // calculation Adjacent Node's costs
 		Pos minCostPos = GetMinCostNode();
 		Debug.Log (string.Format ("minCostPos: ({0},{1}): F:{2}, G:{3}, H:{4}", minCostPos.I, minCostPos.J, _arrMap[minCostPos.I, minCostPos.J].F, _arrMap[minCostPos.I, minCostPos.J].G, _arrMap[minCostPos.I, minCostPos.J].H));
 		// deleting selected node from openList and Adding to closeList
 		_openList.Remove(minCostPos);
 		_closeList.Add (minCostPos);
 
-		PrintOpenList ();
-		PrintCloseList ();
-		Debug.Log(_openList.Exists(x => x.I == 11 && x.J == 9));
-		Debug.Log(_openList.Exists(x => x.I == 2 && x.J == 3));
+		//PrintOpenList ();
+		//PrintCloseList ();
+		//Debug.Log(_openList.Exists(x => x.I == 11 && x.J == 9));
+		//Debug.Log(_openList.Exists(x => x.I == 2 && x.J == 3));
 
 
 		// 5. Find adjacent Node from selected Node 
 		//    and among those things, only not exist things at openlist already, Add to openlist
 		//    In other words, minCostPos is new parent from adjacent nodes.
 
-		AddOpenList( new Pos(minCostPos.I, minCostPos.J+1 ), minCostPos);
-		AddOpenList( new Pos(minCostPos.I+1, minCostPos.J+1 ), minCostPos);
-		AddOpenList( new Pos(minCostPos.I+1, minCostPos.J ), minCostPos);
-		AddOpenList( new Pos(minCostPos.I+1, minCostPos.J-1 ), minCostPos);
-		AddOpenList( new Pos(minCostPos.I, minCostPos.J-1 ), minCostPos);
-		AddOpenList( new Pos(minCostPos.I-1, minCostPos.J-1 ), minCostPos);
-		AddOpenList( new Pos(minCostPos.I-1, minCostPos.J ), minCostPos);
-		AddOpenList( new Pos(minCostPos.I-1, minCostPos.J+1 ), minCostPos);
+
+
 
 	}
 	
