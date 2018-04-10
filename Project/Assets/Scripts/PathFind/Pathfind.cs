@@ -135,12 +135,15 @@ public class Pathfind : MonoBehaviour {
 			_arrMap [pos.I, pos.J].H = GetHValue (pos);
 			_arrMap [pos.I, pos.J].F = _arrMap [pos.I, pos.J].G + _arrMap [pos.I, pos.J].H;
 			_arrMap [pos.I, pos.J].ParentPos = centerPos;
+			AddOpenList(new Pos(pos.I, pos.J));
 		} else { // not first cost calulatio of target node.
 			if (_arrMap [centerPos.I, centerPos.J].G + latestG < _arrMap [pos.I, pos.J].G) {
 				_arrMap [pos.I, pos.J].G = _arrMap [centerPos.I, centerPos.J].G + latestG;
 				_arrMap [pos.I, pos.J].ParentPos = centerPos;
 			}
 		}
+
+
 	}
 
 	public bool IsInCloseList(Pos pos)
@@ -167,80 +170,79 @@ public class Pathfind : MonoBehaviour {
 			!IsInCloseList(targetPos)) //if not obstacle and closeList
 		{
 			CalTargetCost (targetPos, centerPos); // right 
-			AddOpenList(targetPos);
+			//AddOpenList(new Pos(targetPos.I, targetPos.J));
 		}
 		targetPos.J--;
 
 
-		targetPos = centerPos;
 		targetPos.I++; targetPos.J++;
 		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
 			!IsInCloseList(targetPos)) //if not obstacle and closeList
 		{
 			CalTargetCost (targetPos, centerPos); // right below
-			AddOpenList(targetPos);
+			//AddOpenList(new Pos(targetPos.I, targetPos.J));
 
 		}
 		targetPos.I--; targetPos.J--;
 
-		targetPos = centerPos;
+
 		targetPos.I++; 
 		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
 			!IsInCloseList(targetPos) ) //if not obstacle and closeList
 		{
 			CalTargetCost (targetPos, centerPos); // below
-			AddOpenList(targetPos);
+			//AddOpenList(new Pos(targetPos.I, targetPos.J));
 		}
 		targetPos.I--; 
 
-		targetPos = centerPos;
+
 		targetPos.I++; targetPos.J--;
 		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
 			!IsInCloseList(targetPos)) //if not obstacle and closeList
 		{
 			CalTargetCost (targetPos, centerPos); // left below
-			AddOpenList(targetPos);
+			//AddOpenList(new Pos(targetPos.I, targetPos.J));
 		}
 		targetPos.I--; targetPos.J++;
 
 
-		targetPos = centerPos;
+
 		targetPos.J--;
 		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
 			!IsInCloseList(targetPos)) //if not obstacle and closeList
 		{
 			CalTargetCost (targetPos, centerPos); // left
-			AddOpenList(targetPos);
+			//AddOpenList(new Pos(targetPos.I, targetPos.J));
 		}
 		targetPos.J++;
 
-		targetPos = centerPos;
+
 		targetPos.I--; targetPos.J--;
 		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
 			!IsInCloseList(targetPos)) //if not obstacle and closeList
 		{
 			CalTargetCost (targetPos, centerPos); // upper left
-			AddOpenList(targetPos);
+			//AddOpenList(new Pos(targetPos.I, targetPos.J));
 		}
 		targetPos.I++; targetPos.J++;
 
-		targetPos = centerPos;
+
 		targetPos.I--;
 		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
 			!IsInCloseList(targetPos)) //if not obstacle and closeList
 		{
 			CalTargetCost (targetPos, centerPos); // upper
-			AddOpenList(targetPos);
+			//AddOpenList(new Pos(targetPos.I, targetPos.J));
 		}
 		targetPos.I++;
 
-		targetPos = centerPos;
+
 		targetPos.I--; targetPos.J++;
 		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
 			!IsInCloseList(targetPos)) //if not obstacle and closeList
 		{
 			CalTargetCost (targetPos, centerPos); // upper right
-			AddOpenList(targetPos);
+			//AddOpenList(new Pos(targetPos.I, targetPos.J));
 		}
 		targetPos.I++; targetPos.J--;
 
@@ -264,6 +266,14 @@ public class Pathfind : MonoBehaviour {
 	}
 
 
+	public void PrintFinalRouteTrace (Pos pos)
+	{
+		if (pos == null)
+			return;
+		Debug.Log ("("+ pos.I + "," + pos.J + ")" + "->");
+		PrintFinalRouteTrace (_arrMap [pos.I, pos.J].ParentPos);
+	}
+
 	void Start(){
 
 		//map initialize
@@ -272,6 +282,7 @@ public class Pathfind : MonoBehaviour {
 				_arrMap [i, j] = new Node ();
 				_arrMap [i, j].Attribute = 0;
 				_arrMap [i, j].ThisPos = new Pos (i, j);
+				_arrMap [i, j].ParentPos = null;
 			}
 
 		// assign node attribute
@@ -314,18 +325,23 @@ public class Pathfind : MonoBehaviour {
 		// 3. Add start Node to closeList.
 		AddCloseList(_startNodePos);
 
-		// 4. path scoring
-		CalAdjCost(_startNodePos); // calculation Adjacent Node's costs
-		Pos minCostPos = GetMinCostNode();
-		Debug.Log (string.Format ("minCostPos: ({0},{1}): F:{2}, G:{3}, H:{4}", minCostPos.I, minCostPos.J, _arrMap[minCostPos.I, minCostPos.J].F, _arrMap[minCostPos.I, minCostPos.J].G, _arrMap[minCostPos.I, minCostPos.J].H));
-		// deleting selected node from openList and Adding to closeList
-		_openList.Remove(minCostPos);
-		_closeList.Add (minCostPos);
+		Pos minCostPos = _startNodePos;
+		while (!_closeList.Exists (x => x.I == _endNodePos.I && x.J == _endNodePos.J)) {
+			// 4. path scoring
+			CalAdjCost (minCostPos); // calculation Adjacent Node's costs
+			minCostPos = GetMinCostNode ();
+			Debug.Log (string.Format ("minCostPos: ({0},{1}): F:{2}, G:{3}, H:{4}", minCostPos.I, minCostPos.J, _arrMap [minCostPos.I, minCostPos.J].F, _arrMap [minCostPos.I, minCostPos.J].G, _arrMap [minCostPos.I, minCostPos.J].H));
+			// deleting selected node from openList and Adding to closeList
+			_openList.Remove (minCostPos);
+			_closeList.Add (minCostPos);
 
-		//PrintOpenList ();
-		//PrintCloseList ();
-		//Debug.Log(_openList.Exists(x => x.I == 11 && x.J == 9));
-		//Debug.Log(_openList.Exists(x => x.I == 2 && x.J == 3));
+			PrintOpenList ();
+			PrintCloseList ();
+		}
+
+		Debug.Log ("Final Route :");
+		PrintFinalRouteTrace (_endNodePos);
+
 
 
 		// 5. Find adjacent Node from selected Node 
