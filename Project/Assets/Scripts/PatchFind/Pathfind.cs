@@ -172,7 +172,7 @@ public class Pathfind : MonoBehaviour {
 		targetPos.J--;
 
 
-		targetPos = centerPos;
+		//targetPos = centerPos;
 		targetPos.I++; targetPos.J++;
 		if( _arrMap[targetPos.I, targetPos.J].Attribute != 1 && 
 			!IsInCloseList(targetPos)) //if not obstacle and closeList

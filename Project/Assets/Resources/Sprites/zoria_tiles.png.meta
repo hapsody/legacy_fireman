@@ -1,11 +1,14 @@
 fileFormatVersion: 2
-guid: 359999ce9deb5ee4cb8624765cb64de9
-timeCreated: 1523324859
+guid: 29253bac2297ce147ad7c70c0b2586fb
+timeCreated: 1523338200
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: tileset_mountains_0
-    21300002: tileset_mountains_1
+    21300000: zoria_tiles_0
+    21300002: zoria_tiles_1
+    21300004: zoria_tiles_2
+    21300006: zoria_tiles_3
+    21300008: zoria_tiles_4
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -102,29 +105,71 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: tileset_mountains_0
+      name: zoria_tiles_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 415
-        width: 31
-        height: 33
+        x: 288
+        y: 176
+        width: 16
+        height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: tileset_mountains_1
+      name: zoria_tiles_1
       rect:
         serializedVersion: 2
-        x: 31
-        y: 415
-        width: 33
-        height: 33
+        x: 16
+        y: 16
+        width: 16
+        height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: zoria_tiles_2
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: zoria_tiles_3
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 224
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: zoria_tiles_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 208
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
