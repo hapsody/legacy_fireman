@@ -6,7 +6,7 @@ using Random = UnityEngine.Random; 		//Tells Random to use the Unity Engine rand
 namespace Completed
 	
 {
-	
+
 	public class BoardManager : MonoBehaviour
 	{
 		// Using Serializable allows us to embed a class with sub properties in the inspector.
@@ -39,8 +39,15 @@ namespace Completed
 		
 		private Transform boardHolder;									//A variable to store a reference to the transform of our Board object.
 		private List <Vector3> gridPositions = new List <Vector3> ();	//A list of possible locations to place tiles.
-		
-		
+		public Pathfind pathFinder = new Pathfind();
+		public Pathfind PathFinder { get {return pathFinder; } }
+		public List<Vector2> naviMapList = new List<Vector2>();
+
+		void Start() {
+			
+
+		}
+
 		//Clears our list gridPositions and prepares it to generate a new board.
 		void InitialiseList ()
 		{
@@ -63,9 +70,13 @@ namespace Completed
 		//Sets up the outer walls and floor (background) of the game board.
 		void BoardSetup ()
 		{
+			if (pathFinder == null)
+				pathFinder = new Pathfind ();
+			pathFinder.AllocMap(rows+2, columns+2); // 'rows', 'columns' is not include outer wall, so it must be +2.
+
 			//Instantiate Board and set boardHolder to its transform.
 			boardHolder = new GameObject ("Board").transform;
-			
+
 			//Loop along x axis, starting from -1 (to fill corner) with floor or outerwall edge tiles.
 			for(int x = -1; x < columns + 1; x++)
 			{
@@ -76,8 +87,10 @@ namespace Completed
 					GameObject toInstantiate = floorTiles[Random.Range (0,floorTiles.Length)];
 					
 					//Check if we current position is at board edge, if so choose a random outer wall prefab from our array of outer wall tiles.
-					if(x == -1 || x == columns || y == -1 || y == rows)
+					if (x == -1 || x == columns || y == -1 || y == rows) {
 						toInstantiate = outerWallTiles [Random.Range (0, outerWallTiles.Length)];
+						pathFinder.AssignOuterObstacle (x + 1, y + 1);
+					}
 					
 					//Instantiate the GameObject instance using the prefab chosen for toInstantiate at the Vector3 corresponding to current grid position in loop, cast it to GameObject.
 					GameObject instance =
@@ -85,6 +98,7 @@ namespace Completed
 					
 					//Set the parent of our newly instantiated object instance to boardHolder, this is just organizational to avoid cluttering hierarchy.
 					instance.transform.SetParent (boardHolder);
+
 				}
 			}
 		}
@@ -123,6 +137,7 @@ namespace Completed
 				GameObject tileChoice = tileArray[Random.Range (0, tileArray.Length)];
 				
 				//Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
+				pathFinder.AssignObstacle((int)randomPosition.x+1, (int)randomPosition.y+1);
 				Instantiate(tileChoice, randomPosition, Quaternion.identity);
 			}
 		}
@@ -131,6 +146,7 @@ namespace Completed
 		//SetupScene initializes our level and calls the previous functions to lay out the game board
 		public void SetupScene (int level)
 		{
+			
 			//Creates the outer walls and floor.
 			BoardSetup ();
 			
@@ -141,16 +157,18 @@ namespace Completed
 			LayoutObjectAtRandom (wallTiles, wallCount.minimum, wallCount.maximum);
 			
 			//Instantiate a random number of food tiles based on minimum and maximum, at randomized positions.
-			LayoutObjectAtRandom (foodTiles, foodCount.minimum, foodCount.maximum);
+			//LayoutObjectAtRandom (foodTiles, foodCount.minimum, foodCount.maximum);
 			
 			//Determine number of enemies based on current level number, based on a logarithmic progression
-			int enemyCount = (int)Mathf.Log(level, 2f);
+			//int enemyCount = (int)Mathf.Log(level, 2f);
 			
 			//Instantiate a random number of enemies based on minimum and maximum, at randomized positions.
-			LayoutObjectAtRandom (enemyTiles, enemyCount, enemyCount);
+			//LayoutObjectAtRandom (enemyTiles, enemyCount, enemyCount);
 			
 			//Instantiate the exit tile in the upper right hand corner of our game board
-			Instantiate (exit, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
+			//Instantiate (exit, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
+
+			Player.receiveBoardManager (this);
 		}
 	}
 }

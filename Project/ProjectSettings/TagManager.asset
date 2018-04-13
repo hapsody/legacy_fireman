@@ -45,6 +45,9 @@ TagManager:
   - name: Floor
     uniqueID: 2682571889
     locked: 0
+  - name: Player
+    uniqueID: 1286512873
+    locked: 0
   - name: Tree
     uniqueID: 2376646113
     locked: 0

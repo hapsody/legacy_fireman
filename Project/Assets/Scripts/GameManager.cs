@@ -23,7 +23,7 @@ namespace Completed
 		//private List<Enemy> enemies;							//List of all Enemy units, used to issue them move commands.
 		private bool enemiesMoving;								//Boolean to check if enemies are moving.
 		private bool doingSetup = true;							//Boolean to check if we're setting up board, prevent Player from moving during setup.
-		
+		private Player player;
 		
 		
 		//Awake is always called before any Start functions
@@ -49,7 +49,9 @@ namespace Completed
 			
 			//Get a component reference to the attached BoardManager script
 			boardScript = GetComponent<BoardManager>();
-			
+
+
+
 			//Call the InitGame function to initialize the first level 
 			InitGame();
 		}
@@ -78,24 +80,28 @@ namespace Completed
 			doingSetup = true;
 			
 			//Get a reference to our image LevelImage by finding it by name.
-			levelImage = GameObject.Find("LevelImage");
+			//levelImage = GameObject.Find("LevelImage");
 			
 			//Get a reference to our text LevelText's text component by finding it by name and calling GetComponent.
-			levelText = GameObject.Find("LevelText").GetComponent<Text>();
+			//levelText = GameObject.Find("LevelText").GetComponent<Text>();
 			
 			//Set the text of levelText to the string "Day" and append the current level number.
-			levelText.text = "Day " + level;
+			//levelText.text = "Day " + level;
 			
 			//Set levelImage to active blocking player's view of the game board during setup.
-			levelImage.SetActive(true);
+			//levelImage.SetActive(true);
 			
 			//Call the HideLevelImage function with a delay in seconds of levelStartDelay.
-			Invoke("HideLevelImage", levelStartDelay);
+			//Invoke("HideLevelImage", levelStartDelay);
 			
 			//Clear any Enemy objects in our List to prepare for next level.
 			//enemies.Clear();
 			
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
+
+
+
+
 			boardScript.SetupScene(level);
 			
 		}
