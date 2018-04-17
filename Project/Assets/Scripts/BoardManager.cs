@@ -99,7 +99,9 @@ namespace Completed
 					//Set the parent of our newly instantiated object instance to boardHolder, this is just organizational to avoid cluttering hierarchy.
 					instance.transform.SetParent (boardHolder);
 
-				}
+                    Vector3 objectScale = Vector3.Scale(instance.transform.localScale, new Vector3(2.0f, 2.0f, 1.0f));
+                    instance.transform.localScale = objectScale;
+                }
 			}
 		}
 		
