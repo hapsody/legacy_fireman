@@ -24,9 +24,10 @@ namespace Completed
 				maximum = max;
 			}
 		}
-		
-		
-		public int columns = 8; 										//Number of columns in our game board.
+
+        private const float c_fTileScale = 2.0f;
+
+        public int columns = 8; 										//Number of columns in our game board.
 		public int rows = 8;											//Number of rows in our game board.
 		public Count wallCount = new Count (5, 9);						//Lower and upper limit for our random number of walls per level.
 		public Count foodCount = new Count (1, 5);						//Lower and upper limit for our random number of food items per level.
@@ -99,7 +100,9 @@ namespace Completed
 					//Set the parent of our newly instantiated object instance to boardHolder, this is just organizational to avoid cluttering hierarchy.
 					instance.transform.SetParent (boardHolder);
 
-				}
+                    Vector3 objectScale = Vector3.Scale(instance.transform.localScale, new Vector3(c_fTileScale, c_fTileScale, 1.0f));
+                    instance.transform.localScale = objectScale;
+                }
 			}
 		}
 		
