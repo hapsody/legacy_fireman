@@ -15,6 +15,9 @@ namespace Completed
 
 		private Vector3 mousePos;
 		private Vector3 playerPos;
+		private bool playerSelected = false;
+		[SerializeField]
+		private Circle circleUI;
 
 		static public void receiveBoardManager(BoardManager x)
 		{
@@ -24,6 +27,7 @@ namespace Completed
 
 		void Start() {
 			
+
 		}
 
 		// move character 1 unit 
@@ -72,16 +76,28 @@ namespace Completed
 
 
 			if (Input.GetMouseButtonUp(0)) {
-				
-				boardManager.naviMapList.Clear();
-				mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
-				playerPos = transform.position;
-				boardManager.pathFinder.AssignEnd ((int)(mousePos.x+1), (int)(mousePos.y+1));
-				boardManager.pathFinder.AssignStart ((int) (playerPos.x+1), (int) (playerPos.y+1));
-				Debug.Log ("start : " + "(" + playerPos.x + "," + playerPos.y + "), end : (" + (int) mousePos.x + "," + (int) mousePos.y + ")");
-				boardManager.pathFinder.DoPathFind (boardManager.naviMapList);
-				move = true;
 
+				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
+				RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity); 
+
+				if (hit.collider != null) { 
+					if (hit.collider.name == "Player"){
+						if (circleUI.gameObject.activeSelf)
+							circleUI.gameObject.SetActive (false);
+						else
+							circleUI.gameObject.SetActive (true);
+					}
+					
+				} else {
+					boardManager.naviMapList.Clear ();
+					mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+					playerPos = transform.position;
+					boardManager.pathFinder.AssignEnd ((int)(mousePos.x + 1), (int)(mousePos.y + 1));
+					boardManager.pathFinder.AssignStart ((int)(playerPos.x + 1), (int)(playerPos.y + 1));
+					Debug.Log ("start : " + "(" + playerPos.x + "," + playerPos.y + "), end : (" + (int)mousePos.x + "," + (int)mousePos.y + ")");
+					boardManager.pathFinder.DoPathFind (boardManager.naviMapList);
+					move = true;
+				}
 			}
 				
 			if (boardReady && move) {
