@@ -60,6 +60,14 @@ namespace Completed
 			}	
 			return true;
 		}
+			
+
+		public void ToggleCharacterCircleUI(){
+			if (circleUI.gameObject.activeSelf)
+				circleUI.gameObject.SetActive (false);
+			else
+				circleUI.gameObject.SetActive (true);
+		}
 
 		// Update is called once per frame
 		void Update () {
@@ -82,21 +90,27 @@ namespace Completed
 
 				if (hit.collider != null) { 
 					if (hit.collider.name == "Player"){
+						ToggleCharacterCircleUI ();
+						/*
 						if (circleUI.gameObject.activeSelf)
 							circleUI.gameObject.SetActive (false);
 						else
 							circleUI.gameObject.SetActive (true);
+							*/
 					}
 					
 				} else {
-					boardManager.naviMapList.Clear ();
 					mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
-					playerPos = transform.position;
-					boardManager.pathFinder.AssignEnd ((int)(mousePos.x + 1), (int)(mousePos.y + 1));
-					boardManager.pathFinder.AssignStart ((int)(playerPos.x + 1), (int)(playerPos.y + 1));
-					Debug.Log ("start : " + "(" + playerPos.x + "," + playerPos.y + "), end : (" + (int)mousePos.x + "," + (int)mousePos.y + ")");
-					boardManager.pathFinder.DoPathFind (boardManager.naviMapList);
-					move = true;
+					if ((mousePos.x >= 0 && mousePos.y >= 0) && (mousePos.x <= boardManager.rows && mousePos.y <= boardManager.columns)) {
+						boardManager.naviMapList.Clear ();
+						playerPos = transform.position;
+						boardManager.pathFinder.AssignEnd ((int)(mousePos.x + 1), (int)(mousePos.y + 1));
+						boardManager.pathFinder.AssignStart ((int)(playerPos.x + 1), (int)(playerPos.y + 1));
+						Debug.Log ("start : " + "(" + playerPos.x + "," + playerPos.y + "), end : (" + (int)mousePos.x + "," + (int)mousePos.y + ")");
+						boardManager.pathFinder.DoPathFind (boardManager.naviMapList);
+						move = true;
+					} else
+						Debug.Log ("Moving target point is on out of range area");
 				}
 			}
 				
