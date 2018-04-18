@@ -729,7 +729,7 @@ MonoBehaviour:
   outerWallTiles:
   - {fileID: 1008372666679146, guid: b713bbdfc4acd8d4c8b8514f3d6a5c9e, type: 2}
   climbers:
-  - {fileID: 1941678255572228, guid: 02b0614ea5ac31542be2227f6ce9ed06, type: 2}
+  - {fileID: 1218760940636086, guid: 02b0614ea5ac31542be2227f6ce9ed06, type: 2}
   pathFinder: {fileID: 0}
   naviMapList: []
 --- !u!114 &1552687865
