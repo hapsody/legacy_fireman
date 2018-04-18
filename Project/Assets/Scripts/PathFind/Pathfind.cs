@@ -318,10 +318,13 @@ public class Pathfind : MonoBehaviour {
 	public bool AssignStart(int x, int y)
 	{
 		if (_arrMap != null) {
-			_nextStartNodePos = new Pos(x,y);
-			
-				
-			return true;
+			if ((x >= 0 && y >= 0) && x <= _arrMap.GetLength (0) && x <= _arrMap.GetLength (1)) {
+				_nextStartNodePos = new Pos (x, y);
+				return true;
+			} else {
+				Debug.Log ("Error: Start point is out of range ");
+				return false;
+			}
 		} else
 			return false;
 
@@ -331,9 +334,15 @@ public class Pathfind : MonoBehaviour {
 	public bool AssignEnd(int x, int y)
 	{
 		if (_arrMap != null && _assignEnd == false) {
-			_nextEndNodePos = new Pos(x,y);
-			_assignEnd = true;
-			return true;
+			if ((x >= 0 && y >= 0) && x <= _arrMap.GetLength (0) && x <= _arrMap.GetLength (1)) {
+				_nextEndNodePos = new Pos (x, y);
+				_assignEnd = true;
+				return true;
+			} else {
+				Debug.Log ("Error: End point is out of range ");
+				return false;
+			}
+
 		} else
 			return false;
 
