@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -727,6 +727,9 @@ MonoBehaviour:
   foodCount:
     minimum: 1
     maximum: 5
+  climberCount:
+    minimum: 1
+    maximum: 5
   exit: {fileID: 0}
   floorTiles:
   - {fileID: 1966155938151676, guid: dbbc6558a47233942ad86341ce24735f, type: 2}
@@ -736,6 +739,8 @@ MonoBehaviour:
   enemyTiles: []
   outerWallTiles:
   - {fileID: 1008372666679146, guid: b713bbdfc4acd8d4c8b8514f3d6a5c9e, type: 2}
+  climbers:
+  - {fileID: 1941678255572228, guid: 02b0614ea5ac31542be2227f6ce9ed06, type: 2}
   pathFinder: {fileID: 0}
   naviMapList: []
 --- !u!114 &1552687865
