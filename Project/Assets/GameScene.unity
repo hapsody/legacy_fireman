@@ -739,7 +739,7 @@ MonoBehaviour:
   - {fileID: 1008372666679146, guid: b713bbdfc4acd8d4c8b8514f3d6a5c9e, type: 2}
   climbers:
   - {fileID: 1218760940636086, guid: 02b0614ea5ac31542be2227f6ce9ed06, type: 2}
-  FireTile: {fileID: 1502914525809976, guid: c79dd7a463278ac4685464eb553046bd, type: 2}
+  FireTile: {fileID: 1607823355684234, guid: c79dd7a463278ac4685464eb553046bd, type: 2}
   ClimberDiedTile: {fileID: 1980574498239978, guid: 59f7fee1173d1934b99973c63d5a9aa6,
     type: 2}
   TreeBurnedTile: {fileID: 1238608497734508, guid: bca6f626fa4d14b429e2eca54ffdf30e,
