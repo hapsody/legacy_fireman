@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4092993154401984}
   - component: {fileID: 212495671676802744}
   m_Layer: 0
-  m_Name: PlayerDied
+  m_Name: ClimberDied
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

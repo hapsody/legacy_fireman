@@ -725,6 +725,9 @@ MonoBehaviour:
   climberCount:
     minimum: 1
     maximum: 5
+  fireCount:
+    minimum: 1
+    maximum: 5
   exit: {fileID: 0}
   floorTiles:
   - {fileID: 1966155938151676, guid: dbbc6558a47233942ad86341ce24735f, type: 2}
@@ -736,6 +739,13 @@ MonoBehaviour:
   - {fileID: 1008372666679146, guid: b713bbdfc4acd8d4c8b8514f3d6a5c9e, type: 2}
   climbers:
   - {fileID: 1218760940636086, guid: 02b0614ea5ac31542be2227f6ce9ed06, type: 2}
+  FireTile: {fileID: 1502914525809976, guid: c79dd7a463278ac4685464eb553046bd, type: 2}
+  ClimberDiedTile: {fileID: 1980574498239978, guid: 59f7fee1173d1934b99973c63d5a9aa6,
+    type: 2}
+  TreeBurnedTile: {fileID: 1238608497734508, guid: bca6f626fa4d14b429e2eca54ffdf30e,
+    type: 2}
+  TileBurnedTile: {fileID: 1943405754353660, guid: 778948f0a194c794285ce703f74999f6,
+    type: 2}
   pathFinder: {fileID: 0}
   naviMapList: []
 --- !u!114 &1552687865

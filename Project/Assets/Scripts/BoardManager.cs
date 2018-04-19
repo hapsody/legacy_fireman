@@ -32,6 +32,8 @@ namespace Completed
 		public Count wallCount = new Count (5, 9);						//Lower and upper limit for our random number of walls per level.
 		public Count foodCount = new Count (1, 5);						//Lower and upper limit for our random number of food items per level.
         public Count climberCount = new Count(1, 5);                       //Lower and upper limit for our random number of food items per level.
+        public Count fireCount = new Count(1, 5);                       //Lower and upper limit for our random number of food items per level.
+
         public GameObject exit;											//Prefab to spawn for exit.
 		public GameObject[] floorTiles;									//Array of floor prefabs.
 		public GameObject[] wallTiles;									//Array of wall prefabs.
@@ -39,8 +41,15 @@ namespace Completed
 		public GameObject[] enemyTiles;									//Array of enemy prefabs.
 		public GameObject[] outerWallTiles;								//Array of outer tile prefabs.
         public GameObject[] climbers;                                   //Array of climbers
-		
-		private Transform boardHolder;									//A variable to store a reference to the transform of our Board object.
+
+        private List<GameObject> FireTiles  = new List<GameObject>();                            //불 붙은 타일을 동적으로 집어넣는다.
+
+        public GameObject FireTile;
+        public GameObject ClimberDiedTile;
+        public GameObject TreeBurnedTile;
+        public GameObject TileBurnedTile;
+
+        private Transform boardHolder;									//A variable to store a reference to the transform of our Board object.
 		private List <Vector3> gridPositions = new List <Vector3> ();	//A list of possible locations to place tiles.
 		public Pathfind pathFinder = new Pathfind();
 		public Pathfind PathFinder { get {return pathFinder; } }
@@ -146,10 +155,37 @@ namespace Completed
 				Instantiate(tileChoice, randomPosition, Quaternion.identity);
 			}
 		}
-		
-		
-		//SetupScene initializes our level and calls the previous functions to lay out the game board
-		public void SetupScene (int level)
+
+        void SpawnFireAtRandom(GameObject tile, int minimum, int maximum)
+        {
+            FireTiles.Clear();
+
+            //Choose a random number of objects to instantiate within the minimum and maximum limits
+            int objectCount = Random.Range(minimum, maximum + 1);
+
+            //Instantiate objects until the randomly chosen limit objectCount is reached
+            for (int i = 0; i < objectCount; i++)
+            {
+                //Choose a position for randomPosition by getting a random position from our list of available Vector3s stored in gridPosition
+                Vector3 randomPosition = RandomPosition();
+
+                //Choose a random tile from tileArray and assign it to tileChoice
+                GameObject tileChoice = tile;
+
+                //Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
+                pathFinder.AssignObstacle((int)randomPosition.x + 1, (int)randomPosition.y + 1);
+                GameObject instance = Instantiate(tileChoice, randomPosition, Quaternion.identity) as GameObject;
+
+                Vector3 objectScale = Vector3.Scale(instance.transform.localScale, new Vector3(c_fTileScale, c_fTileScale, 1.0f));
+                instance.transform.localScale = objectScale;
+
+                FireTiles.Add(instance);
+            }
+        }
+
+
+        //SetupScene initializes our level and calls the previous functions to lay out the game board
+        public void SetupScene (int level)
 		{
 			
 			//Creates the outer walls and floor.
@@ -163,6 +199,7 @@ namespace Completed
 
             LayoutObjectAtRandom(climbers, climberCount.minimum, climberCount.maximum);
 
+            SpawnFireAtRandom(FireTile, fireCount.minimum, fireCount.maximum);
             //Instantiate a random number of food tiles based on minimum and maximum, at randomized positions.
             //LayoutObjectAtRandom (foodTiles, foodCount.minimum, foodCount.maximum);
 
