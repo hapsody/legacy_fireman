@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic; 		//Allows us to use Lists.
 using Random = UnityEngine.Random; 		//Tells Random to use the Unity Engine random number generator.
+using System.IO;
+using TGAME;
 
 namespace Completed
 	
@@ -55,7 +57,13 @@ namespace Completed
 		public Pathfind PathFinder { get {return pathFinder; } }
 		public List<Vector2> naviMapList = new List<Vector2>();
 
-		void Start() {
+
+
+
+        string m_strPath = "Assets/Resources/";
+
+
+        void Start() {
 			
 
 		}
@@ -189,30 +197,92 @@ namespace Completed
 		{
 			
 			//Creates the outer walls and floor.
-			BoardSetup ();
+			//BoardSetup ();
 			
 			//Reset our list of gridpositions.
 			InitialiseList ();
-			
-			//Instantiate a random number of wall tiles based on minimum and maximum, at randomized positions.
+
+            //Instantiate a random number of wall tiles based on minimum and maximum, at randomized positions.
+            /*
 			LayoutObjectAtRandom (wallTiles, wallCount.minimum, wallCount.maximum);
 
             LayoutObjectAtRandom(climbers, climberCount.minimum, climberCount.maximum);
 
             SpawnFireAtRandom(FireTile, fireCount.minimum, fireCount.maximum);
-            //Instantiate a random number of food tiles based on minimum and maximum, at randomized positions.
-            //LayoutObjectAtRandom (foodTiles, foodCount.minimum, foodCount.maximum);
+            */
+            TPrefabMgr.Load("Prefabs", null);
+            
 
-            //Determine number of enemies based on current level number, based on a logarithmic progression
-            //int enemyCount = (int)Mathf.Log(level, 2f);
+            PutObject();
 
-            //Instantiate a random number of enemies based on minimum and maximum, at randomized positions.
-            //LayoutObjectAtRandom (enemyTiles, enemyCount, enemyCount);
-
-            //Instantiate the exit tile in the upper right hand corner of our game board
-            //Instantiate (exit, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
-
-            Player.receiveBoardManager (this);
+            //Player.receiveBoardManager (this);
 		}
-	}
+
+        private void PutObject()
+        {
+            int iY = 9;
+            int iZ = 0;
+            int iX = -1;
+
+            TextAsset data = Resources.Load("stage1", typeof(TextAsset)) as TextAsset;
+
+            StringReader sr = new StringReader(data.text);
+
+            // 먼저 한줄을 읽는다. 
+            string source = sr.ReadLine();
+
+            string[] values;                // 쉼표로 구분된 데이터들을 저장할 배열 (values[0]이면 첫번째 데이터 )
+
+            while (source != null)
+
+            {
+                values = source.Split(',');  // 쉼표로 구분한다. 저장시에 쉼표로 구분하여 저장하였다.
+
+                if (values.Length == 0)
+
+                {
+
+                    sr.Close();
+
+                    return;
+
+                }
+
+                for (int i = 0; i < values.Length; i++)
+                {
+                    //0: outer wall, 1:tree, 2:emptyspace, 3:climber
+                    string objname = "";
+                    if (values[i].Equals("0"))
+                    {
+                        objname = "OuterWall1";
+                    }
+                    else if (values[i].Equals("1"))
+                    {
+                        objname = "Tree1";
+                    }
+                    else if (values[i].Equals("2"))
+                    {
+                        objname = "Tile1";
+                    }
+                    else if (values[i].Equals("3"))
+                    {
+                        objname = "Climber";
+                    }
+                    else if (values[i].Equals("4"))
+                    {
+                        objname = "Fire";
+                    }
+
+                    GameObject obj = TPrefabMgr.Instance(objname, objname, iX + i, iY, iZ);
+                    Vector3 objectScale = Vector3.Scale(obj.transform.localScale, new Vector3(c_fTileScale, c_fTileScale, 1.0f));
+                    obj.transform.localScale = objectScale;
+
+                }
+
+                source = sr.ReadLine();    // 한줄 읽는다.
+                iY--;
+            }
+
+        }
+    }
 }
