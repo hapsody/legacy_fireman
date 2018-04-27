@@ -218,6 +218,12 @@ namespace Completed
             //Player.receiveBoardManager (this);
 		}
 
+        private void PutTile(int iX, int iY, int iZ)
+        {
+            GameObject tile = TPrefabMgr.Instance("Tile1", "Tile1", iX, iY, iZ);
+            Vector3 objectScl = Vector3.Scale(tile.transform.localScale, new Vector3(c_fTileScale, c_fTileScale, 1.0f));
+            tile.transform.localScale = objectScl;
+        }
         private void PutObject()
         {
             int iY = 9;
@@ -258,18 +264,25 @@ namespace Completed
                     }
                     else if (values[i].Equals("1"))
                     {
+                        PutTile(iX+i,iY,iZ);
+
                         objname = "Tree1";
                     }
                     else if (values[i].Equals("2"))
                     {
-                        objname = "Tile1";
+                        PutTile(iX + i, iY, iZ);
+                        continue;
                     }
                     else if (values[i].Equals("3"))
                     {
+                        PutTile(iX + i, iY, iZ);
+
                         objname = "Climber";
                     }
                     else if (values[i].Equals("4"))
                     {
+                        PutTile(iX + i, iY, iZ);
+
                         objname = "Fire";
                     }
 
