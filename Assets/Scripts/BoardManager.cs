@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.IO;
+using TGAME;
 
 public class BoardManager : MonoBehaviour {
 
@@ -18,11 +19,157 @@ public class BoardManager : MonoBehaviour {
 	private int xSize;
 	private int ySize;
 
+    public int columns = 8;                                         //Number of columns in our game board.
+    public int rows = 8;                                            //Number of rows in our game board.
 
+    private const float c_fTileScale = 2.0f;
 
-	public void BoardInit()
+    private const int c_nTileLength = 14;
+
+    string m_strPath = "Assets/Resources/";
+
+    //Awake is always called before any Start functions
+    void Awake()
+    {
+        TPrefabMgr.Load("Prefabs", null);
+
+        BoardInit();
+    }
+
+    /*
+    private void PutTile(int iX, int iY, int iZ)
+    {
+        GameObject tile = TPrefabMgr.Instance("Tile1", "Tile1", iX, iY, iZ);
+        Vector3 objectScl = Vector3.Scale(tile.transform.localScale, new Vector3(c_fTileScale, c_fTileScale, 1.0f));
+        tile.transform.localScale = objectScl;
+    }
+    */
+
+    public void BoardInit()
 	{
-		
+
+        xSize = ySize = 9; // map size
+        _map = new BoardHolder[xSize, ySize];
+
+        //_map init
+        for (int i = 0; i < ySize; i++)
+            for (int j = 0; j < xSize; j++)
+                _map[i, j] = new BoardHolder();
+
+        //tile set up
+        bool isLight = true;
+        for (int i = 0; i < ySize; i++)
+        {
+            if (ySize % 2 == 0)
+            {
+                if (isLight == true)
+                    isLight = false;
+                else
+                    isLight = true;
+            }
+
+            for (int j = 0; j < xSize; j++)
+            {
+
+
+                if (isLight == true)
+                {
+                    _grassLight.transform.position = new Vector3(j * c_nTileLength, 0, i * c_nTileLength);
+                    _map[i, j].objList.Add(GameObject.Instantiate(_grassLight));
+                    isLight = false;
+                }
+                else
+                {
+                    _grassDark.transform.position = new Vector3(j * c_nTileLength, 0, i * c_nTileLength);
+                    _map[i, j].objList.Add(GameObject.Instantiate(_grassDark));
+                    isLight = true;
+                }
+            }
+
+        } // for statement
+
+
+        //int iX = 0;
+        int iY = 0;
+        int iZ = 10;
+        
+        TextAsset data = Resources.Load("stage1", typeof(TextAsset)) as TextAsset;
+
+        StringReader sr = new StringReader(data.text);
+
+        // 먼저 한줄을 읽는다. 
+        string source = sr.ReadLine();
+
+        string[] values;                // 쉼표로 구분된 데이터들을 저장할 배열 (values[0]이면 첫번째 데이터 )
+
+        while (source != null)
+
+        {
+            values = source.Split(',');  // 쉼표로 구분한다. 저장시에 쉼표로 구분하여 저장하였다.
+
+            if (values.Length == 0)
+
+            {
+
+                sr.Close();
+
+                return;
+
+            }
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                //0: outer wall, 1:tree, 2:emptyspace, 3:climber, 4:fire, 5:fireman
+                string objname = "";
+                if (values[i].Equals("0"))
+                {
+                    //objname = "OuterWall1";
+                    continue;
+                }
+                else if (values[i].Equals("1"))
+                {
+                    //PutTile(iX + i, iY, iZ);
+
+                    objname = "Tree1";
+                }
+                else if (values[i].Equals("2"))
+                {
+                    //PutTile(iX + i, iY, iZ);
+                    continue;
+                }
+                else if (values[i].Equals("3"))
+                {
+                    //PutTile(iX + i, iY, iZ);
+
+                    objname = "Climber";
+                }
+                else if (values[i].Equals("4"))
+                {
+                    //PutTile(iX + i, iY, iZ);
+
+                    //objname = "Fire";
+                    continue;
+                }
+                else if (values[i].Equals("5"))
+                {
+                    //PutTile(iX + i, iY, iZ);
+
+                    objname = "Fireman";
+                }
+
+
+                GameObject obj = TPrefabMgr.Instance(objname, objname, ((i-1)* c_nTileLength) - (c_nTileLength / 2), iY, (iZ * c_nTileLength) - (c_nTileLength / 2));
+                Vector3 objectScale = Vector3.Scale(obj.transform.localScale, new Vector3(c_fTileScale, c_fTileScale, c_fTileScale));
+                obj.transform.localScale = objectScale;
+                
+
+            }
+
+            source = sr.ReadLine();    // 한줄 읽는다.
+            iZ--;
+        }
+
+        /*
 		xSize = ySize = 8; // map size
 		_map = new BoardHolder[xSize, ySize];
 
@@ -54,6 +201,7 @@ public class BoardManager : MonoBehaviour {
 					isLight = true;
 				}
 			} 
+            
 		} // for statement
 
 
@@ -89,12 +237,12 @@ public class BoardManager : MonoBehaviour {
 		});
 
 			
+    */
+    } // BoardInit
 
-	} // BoardInit
-
-	// Use this for initialization
-	void Start () {
-		BoardInit ();
+    // Use this for initialization
+    void Start () {
+		//BoardInit ();
 	} 
 	
 	// Update is called once per frame
